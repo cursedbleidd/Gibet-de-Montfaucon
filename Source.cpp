@@ -1,5 +1,4 @@
 ﻿#include <iostream>
-#include <stdio.h>
 #include <fstream>
 #include <windows.h>
 #include <string>
@@ -29,7 +28,7 @@ void deleteSymbols(int count)
     }
 }
 
-void blinkingRes(bool result, string word)
+void blinkingRes(bool result, string word) //вывод результата игры
 {
     string msg;
     msg = result ? "ВЫ ПОБЕДИЛИ!" : "Вы проиграли!";
@@ -41,13 +40,13 @@ void blinkingRes(bool result, string word)
         deleteSymbols(size(msg));
     }
     colorChange(WHITE);
-    if (!result) cout << word << endl;
-    cout << msg;
+    if (!result) cout << word << endl << " " << msg;
+    else cout << msg;
 }
 
 void loadGame()
 {
-    cout << "Виселица"; Sleep(1000);
+    cout << " Виселица"; Sleep(1000);
     for (int i = 0; i < 3; i++)
     {
         cout << "."; Sleep(250);
@@ -55,10 +54,10 @@ void loadGame()
         cout << "."; Sleep(250);
         deleteSymbols(3); Sleep(150);
     }
-    deleteSymbols(8);
+    deleteSymbols(9);
 }
 
-string chooseWord()
+string chooseWord() //выбор случайного слова
 {
     string word; int n, cnt = 0;
     ifstream dict("dict.txt");
@@ -71,19 +70,19 @@ string chooseWord()
     return *(words + n);
 }
 
-bool checkInput(string usedLetters, char userInput)
+bool checkInput(string str, char userInput) //проверка слова на наличие введенной буквы
 {
     int i = 0;
     bool chk = true;
-    while (chk && size(usedLetters) > i)
+    while (chk && size(str) > i)
     {
-        chk = (usedLetters[i] != userInput);
+        chk = (str[i] != userInput);
         i++;
     }
     return chk;
 }
 
-void paintField(string key, ifstream& spray, bool status)
+void paintField(string key, ifstream& spray, bool status) //отрисовка поля
 {
     string sprite;
     system("cls");
@@ -93,14 +92,10 @@ void paintField(string key, ifstream& spray, bool status)
         for (int i = 1; i <= 7; i++)
         {
             getline(spray, sprite);
-            OutPut += sprite + "\n";
+            OutPut += " " + sprite + "\n";
         }
-        cout << OutPut + "\n" + "Использованные буквы:" + usedLetters + "\n" + key + "\n";
     }
-    else
-    {
-        cout << OutPut + "\n" + "Использованные буквы:" + usedLetters + "\n" + key + "\n";
-    }
+    cout << OutPut + "\n " + "Использованные буквы:" + usedLetters + "\n " + key + "\n ";
 }
 
 void Game(string word, ifstream &spray)
@@ -109,15 +104,15 @@ void Game(string word, ifstream &spray)
     bool status = true;
     string key(letters, '_');
     char userInput;
-    while (mistakes != 5 && letters != 0)
+    while (mistakes != 5 && letters != 0) //проверка победы или поражения после каждого ввода
     {
         paintField(key, spray, status);
         cin >> userInput;
         cnt = 0;
-        while (!checkInput(key, userInput) || !checkInput(usedLetters, userInput) || (int)userInput < -64 || (int)userInput > -33)
+        while (!checkInput(key, userInput) || !checkInput(usedLetters, userInput) || (int)userInput < -64 || (int)userInput > -33) //защита от неправильного ввода
         {
             paintField(key, spray, false);
-            cout << "Буква уже была названа или использован неверный формат символа. Введите букву:\n"; cin >> userInput;
+            cout << "Буква уже была названа или использован неверный формат символа.(Используйте заглавные буквы Кириллицы)\n Введите букву:\n "; cin >> userInput;
         }
         for (int i = 0; i < size(word); i++)
         {
@@ -151,6 +146,6 @@ int main()
     loadGame();
     Game(word, sprays);
     sprays.close();
-    cout << endl;
+    cout << endl << " ";
     system("pause");
 }
